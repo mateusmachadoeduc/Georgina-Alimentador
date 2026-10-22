@@ -1,0 +1,1489 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Georgina Alimentador</title>
+<meta name="description" content="Painel do alimentador automático Georgina para peixes e tartarugas">
+<meta name="theme-color" content="#E4F4F1" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0D1B2E" media="(prefers-color-scheme: dark)">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐠</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lilita+One&family=Nunito:wght@500;700;800;900&display=swap" rel="stylesheet">
+<style>
+/* ================= TOKENS ================= */
+:root{
+  --fundo:#E4F4F1;
+  --bolha:#CDEBE6;
+  --cartao:#FFFFFF;
+  --cartao-2:#F3FAF9;
+  --tinta:#17324D;
+  --tinta-suave:#4C6782;
+  --borda:#17324D;
+  --sombra:#17324D;
+  --contorno-letra:#17324D;
+
+  --coral:#FF6B57;
+  --sol:#FFC233;
+  --alga:#22B07D;
+  --lagoa:#2E86F0;
+  --uva:#8B5CF6;
+
+  --agua-topo:#9BE3F5;
+  --agua-fundo:#2E86F0;
+  --lago-topo:#A6EBD3;
+  --lago-fundo:#17927B;
+  --areia:#F2D49B;
+  --areia-escura:#E3B96B;
+
+  --raio:22px;
+  --raio-botao:16px;
+  --fonte-titulo:"Lilita One","Arial Rounded MT Bold","Trebuchet MS",system-ui,sans-serif;
+  --fonte:"Nunito",ui-rounded,"SF Pro Rounded",system-ui,-apple-system,"Segoe UI",sans-serif;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --fundo:#0D1B2E; --bolha:#132743; --cartao:#14294A; --cartao-2:#1A3358;
+    --tinta:#EAF3FF; --tinta-suave:#A9BED6; --borda:#040B17; --sombra:#040B17;
+    --agua-topo:#1A6FB0; --agua-fundo:#06264A; --areia:#8C6D3D; --areia-escura:#6E5229;
+    --lago-topo:#16735F; --lago-fundo:#053A31;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --fundo:#0D1B2E; --bolha:#132743; --cartao:#14294A; --cartao-2:#1A3358;
+  --tinta:#EAF3FF; --tinta-suave:#A9BED6; --borda:#040B17; --sombra:#040B17;
+  --agua-topo:#1A6FB0; --agua-fundo:#06264A; --areia:#8C6D3D; --areia-escura:#6E5229;
+  --lago-topo:#16735F; --lago-fundo:#053A31;
+  color-scheme:dark;
+}
+
+/* ================= BASE ================= */
+*{box-sizing:border-box}
+[hidden]{display:none !important}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0; min-height:100vh;
+  font-family:var(--fonte); font-weight:700; font-size:16px; line-height:1.45;
+  color:var(--tinta); background-color:var(--fundo);
+  background-image:
+    radial-gradient(circle at 12% 18%, var(--bolha) 0 26px, transparent 27px),
+    radial-gradient(circle at 88% 9%, var(--bolha) 0 16px, transparent 17px),
+    radial-gradient(circle at 78% 62%, var(--bolha) 0 34px, transparent 35px),
+    radial-gradient(circle at 6% 82%, var(--bolha) 0 20px, transparent 21px);
+  background-attachment:fixed;
+  transition:background-color .3s, color .3s;
+}
+button,input,select{font:inherit;color:inherit}
+:focus-visible{outline:3px dashed var(--lagoa); outline-offset:3px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+/* ================= TOPO ================= */
+.topo{max-width:1100px;margin:0 auto;padding:14px 16px 6px;text-align:center}
+.barra{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.pilula{
+  display:inline-flex;align-items:center;gap:8px;padding:6px 14px;border-radius:999px;
+  border:3px solid var(--borda);background:var(--cartao);font-weight:800;font-size:.9rem;
+  box-shadow:3px 3px 0 var(--sombra);
+}
+.pilula i{width:11px;height:11px;border-radius:50%;background:#9AA8B8;display:block}
+.pilula.on i{background:var(--alga);box-shadow:0 0 0 4px color-mix(in srgb,var(--alga) 30%,transparent)}
+.pilula.demo i{background:var(--uva)}
+.pilula.busy i{background:var(--sol);animation:pisca 1s infinite}
+@keyframes pisca{50%{opacity:.3}}
+
+.btn-icone{
+  width:48px;height:48px;border-radius:50%;border:3px solid var(--borda);background:var(--sol);
+  font-size:1.35rem;cursor:pointer;box-shadow:3px 3px 0 var(--sombra);
+  display:grid;place-items:center;transition:transform .1s, box-shadow .1s;
+}
+.btn-icone:active{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--sombra)}
+
+.marca{display:flex;align-items:center;justify-content:center;gap:clamp(6px,2vw,18px);margin:10px 0 2px}
+.marca .lado{font-size:clamp(2rem,8vw,3.6rem);display:inline-block}
+.marca .lado.peixe{animation:boiar 3.2s ease-in-out infinite}
+.marca .lado.tarta{animation:boiar 3.2s ease-in-out infinite reverse}
+@keyframes boiar{50%{transform:translateY(-6px) rotate(-4deg)}}
+
+.georgina{
+  margin:0;font-family:var(--fonte-titulo);font-weight:400;letter-spacing:.01em;
+  font-size:clamp(3.1rem,13vw,6rem);line-height:1;display:flex;
+}
+.georgina span{
+  display:inline-block;color:var(--c);
+  -webkit-text-stroke:4px var(--contorno-letra);paint-order:stroke fill;
+  text-shadow:4px 5px 0 var(--contorno-letra);
+  transform:rotate(var(--r));
+  animation:chegar .7s cubic-bezier(.3,1.6,.5,1) both;animation-delay:var(--d);
+  cursor:default;
+}
+.georgina span:hover{animation:pular .5s cubic-bezier(.3,1.6,.5,1)}
+@keyframes chegar{from{transform:translateY(-60px) scale(.4);opacity:0}to{transform:rotate(var(--r));opacity:1}}
+@keyframes pular{40%{transform:translateY(-14px) rotate(calc(var(--r) * -2))}}
+.sub{margin:6px 0 0;color:var(--tinta-suave);font-weight:800;font-size:clamp(.95rem,2.8vw,1.15rem)}
+
+/* ================= GRADE ================= */
+.grade{
+  max-width:1100px;margin:0 auto;padding:18px 16px 40px;
+  display:grid;gap:22px;grid-template-columns:minmax(0,1fr);
+}
+@media (min-width:900px){
+  .grade{grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);align-items:start}
+  .conexao,.historico{grid-column:1 / -1}
+}
+.cartao{
+  background:var(--cartao);border:3px solid var(--borda);border-radius:var(--raio);
+  box-shadow:6px 6px 0 var(--sombra);padding:18px;min-width:0;
+}
+.cartao h2{
+  font-family:var(--fonte-titulo);font-weight:400;font-size:1.6rem;margin:0 0 12px;
+  display:flex;align-items:center;gap:10px;letter-spacing:.01em;
+}
+.cartao h2 .emo{font-size:1.5rem}
+.dica{color:var(--tinta-suave);font-size:.92rem;font-weight:700;margin:6px 0 0}
+
+/* ================= BOTÕES ================= */
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  min-height:48px;padding:10px 18px;border-radius:var(--raio-botao);
+  border:3px solid var(--borda);background:var(--cartao-2);font-weight:900;font-size:1rem;
+  cursor:pointer;box-shadow:4px 4px 0 var(--sombra);text-decoration:none;
+  transition:transform .1s, box-shadow .1s, filter .15s;
+  -webkit-tap-highlight-color:transparent;
+}
+.btn:hover{filter:brightness(1.05)}
+.btn:active{transform:translate(3px,3px);box-shadow:1px 1px 0 var(--sombra)}
+.btn:disabled{opacity:.5;cursor:not-allowed;transform:none;box-shadow:4px 4px 0 var(--sombra)}
+.btn.coral{background:var(--coral);color:#fff}
+.btn.sol{background:var(--sol);color:#17324D}
+.btn.alga{background:var(--alga);color:#fff}
+.btn.lagoa{background:var(--lagoa);color:#fff}
+.btn.uva{background:var(--uva);color:#fff}
+.btn.pequeno{min-height:40px;padding:6px 12px;font-size:.92rem;box-shadow:3px 3px 0 var(--sombra)}
+
+/* ================= CONEXÃO ================= */
+.conexao details>summary{
+  list-style:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:10px;
+}
+.conexao details>summary::-webkit-details-marker{display:none}
+.conexao summary h2{margin:0}
+.conexao summary .seta{font-size:1.2rem;transition:transform .2s}
+.conexao details[open] summary .seta{transform:rotate(180deg)}
+.form-conexao{display:grid;gap:14px;margin-top:16px;grid-template-columns:minmax(0,1fr)}
+@media (min-width:700px){.form-conexao{grid-template-columns:minmax(0,1fr) minmax(0,1fr) auto;align-items:end}}
+.campo label{display:block;font-weight:900;margin-bottom:6px}
+.campo input[type=text],.campo input[type=password]{
+  width:100%;min-height:48px;padding:10px 14px;border-radius:14px;border:3px solid var(--borda);
+  background:var(--cartao-2);font-weight:800;
+}
+.com-olho{position:relative}
+.com-olho input{padding-right:52px}
+.com-olho button{position:absolute;right:6px;top:50%;transform:translateY(-50%);border:0;background:none;font-size:1.25rem;cursor:pointer;width:40px;height:40px}
+.opcoes-conexao{display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin-top:14px}
+.aviso{
+  margin-top:14px;padding:12px 14px;border-radius:14px;border:3px dashed var(--borda);
+  background:color-mix(in srgb,var(--sol) 22%,var(--cartao));font-weight:700;
+}
+.aviso.erro{background:color-mix(in srgb,var(--coral) 18%,var(--cartao))}
+.aviso p{margin:0 0 8px}
+.aviso p:last-child{margin-bottom:0}
+.troca{display:inline-flex;align-items:center;gap:10px;cursor:pointer;font-weight:900}
+
+/* chave liga/desliga */
+.chave{position:relative;width:58px;height:34px;flex:none}
+.chave input{position:absolute;inset:0;opacity:0;cursor:pointer;margin:0;z-index:1}
+.chave span{
+  position:absolute;inset:0;border-radius:999px;border:3px solid var(--borda);background:#C7D3DF;transition:background .2s;
+}
+.chave span::after{
+  content:"";position:absolute;top:3px;left:3px;width:22px;height:22px;border-radius:50%;
+  background:#fff;border:2px solid var(--borda);transition:transform .2s cubic-bezier(.3,1.6,.5,1);
+}
+.chave input:checked+span{background:var(--alga)}
+.chave input:checked+span::after{transform:translateX(24px)}
+.chave input:focus-visible+span{outline:3px dashed var(--lagoa);outline-offset:3px}
+
+/* ================= AQUÁRIO ================= */
+.tanques{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+@media (max-width:440px){.tanques{grid-template-columns:minmax(0,1fr)}}
+.tanque{min-width:0;display:grid;gap:10px}
+.tanque h3{
+  font-family:var(--fonte-titulo);font-weight:400;font-size:1.25rem;margin:0;
+  display:flex;align-items:center;justify-content:space-between;gap:8px;
+}
+.estado-tanque{font-family:var(--fonte);font-weight:900;font-size:.8rem;border:2px solid var(--borda);border-radius:999px;padding:2px 10px;background:var(--cartao-2);white-space:nowrap}
+.estado-tanque.abrindo{background:var(--sol);color:#17324D}
+.btn-testar{width:100%}
+.aquario{
+  position:relative;height:clamp(210px,34vw,260px);border-radius:18px;overflow:hidden;
+  border:3px solid var(--borda);
+  background:linear-gradient(180deg,var(--agua-topo) 0%,var(--agua-fundo) 100%);
+  isolation:isolate;
+}
+.aquario.tartarugas{background:linear-gradient(180deg,var(--lago-topo) 0%,var(--lago-fundo) 100%)}
+.aquario::before{ /* reflexos de luz */
+  content:"";position:absolute;inset:0;z-index:-1;
+  background:repeating-linear-gradient(115deg,rgba(255,255,255,.13) 0 18px,transparent 18px 70px);
+}
+.superficie{position:absolute;left:0;right:0;top:44px;height:10px;
+  background:radial-gradient(circle at 10px -2px,transparent 9px,rgba(255,255,255,.45) 10px) 0 0/20px 10px repeat-x;}
+.areia{position:absolute;left:-5%;right:-5%;bottom:-22px;height:70px;background:var(--areia);
+  border-radius:50% 50% 0 0/40px 40px 0 0;border-top:3px solid var(--borda);}
+.areia::after{content:"";position:absolute;inset:14px 0 0;background:radial-gradient(circle,var(--areia-escura) 2px,transparent 3px) 0 0/22px 14px}
+.planta{position:absolute;bottom:22px;font-size:2.4rem;transform-origin:bottom center;animation:balancar 4s ease-in-out infinite}
+.planta.p2{animation-delay:-2s;font-size:2rem}
+@keyframes balancar{50%{transform:rotate(7deg)}}
+.pedra{position:absolute;bottom:18px;font-size:1.8rem}
+
+.dispenser{position:absolute;top:0;left:50%;transform:translateX(-50%);width:104px;height:46px;z-index:3}
+.caixa{
+  position:absolute;inset:0 10px 10px;background:var(--sol);border:3px solid var(--borda);border-top:0;
+  border-radius:0 0 14px 14px;display:grid;place-items:center;font-size:1.05rem;font-weight:900;color:#17324D;
+}
+.tampa{
+  position:absolute;left:32px;bottom:2px;width:40px;height:10px;background:var(--coral);
+  border:3px solid var(--borda);border-radius:6px;transform-origin:left center;transition:transform .35s cubic-bezier(.3,1.6,.5,1);
+}
+.aquario.comendo .tampa{transform:rotate(80deg)}
+
+.nadador{position:absolute;font-size:2.1rem;line-height:1;transition:top 1s cubic-bezier(.3,1.2,.5,1);z-index:2}
+.nadador .corpo{display:inline-block;animation:nadar var(--t) linear infinite;animation-delay:var(--a)}
+.nadador{animation:atravessar var(--t) linear infinite;animation-delay:var(--a)}
+@keyframes atravessar{0%{left:-12%}50%{left:92%}100%{left:-12%}}
+@keyframes nadar{0%,49.9%{transform:scaleX(-1)}50%,100%{transform:scaleX(1)}}
+.tartaruga{position:absolute;bottom:30px;left:62%;font-size:2.7rem;z-index:2;transition:bottom 1s cubic-bezier(.3,1.2,.5,1), left 1s}
+.tartaruga .corpo{display:inline-block;animation:passear 9s ease-in-out infinite}
+@keyframes passear{0%,100%{transform:translateX(0) scaleX(1)}45%{transform:translateX(-60px) scaleX(1)}50%{transform:translateX(-60px) scaleX(-1)}95%{transform:translateX(0) scaleX(-1)}}
+.aquario.comendo .nadador{top:62px !important}
+.aquario.comendo .tartaruga{bottom:110px;left:44%}
+
+.ilha{position:absolute;right:-6px;bottom:26px;font-size:3.4rem;z-index:1}
+.ilha+.sol-tarta{position:absolute;right:14px;bottom:70px;font-size:1.8rem;z-index:2}
+.bolha{position:absolute;bottom:20px;width:12px;height:12px;border-radius:50%;border:2px solid rgba(255,255,255,.75);
+  animation:subir var(--t,5s) ease-in infinite;animation-delay:var(--a,0s);opacity:0}
+@keyframes subir{0%{transform:translateY(0);opacity:0}10%{opacity:1}90%{opacity:.8}100%{transform:translateY(-260px);opacity:0}}
+
+.racao{position:absolute;top:40px;width:9px;height:9px;border-radius:50%;background:#A0612F;border:2px solid #5A3214;z-index:2;
+  animation:cair var(--t) cubic-bezier(.4,.1,.6,1) forwards;animation-delay:var(--a)}
+@keyframes cair{0%{transform:translate(0,0);opacity:0}8%{opacity:1}100%{transform:translate(var(--x),var(--y));opacity:0}}
+
+.balao{
+  position:absolute;top:58px;left:50%;transform:translate(-50%,10px) scale(.7);opacity:0;z-index:4;
+  background:#fff;color:#17324D;border:3px solid #17324D;border-radius:18px;padding:6px 12px;font-weight:900;font-size:.95rem;
+  white-space:nowrap;max-width:92%;overflow:hidden;text-overflow:ellipsis;transition:all .35s cubic-bezier(.3,1.6,.5,1);box-shadow:3px 3px 0 #17324D;
+}
+.aquario.comendo .balao{opacity:1;transform:translate(-50%,0) scale(1)}
+
+.acoes-principais{display:grid;grid-template-columns:minmax(0,1fr);gap:12px;margin-top:18px}
+.acoes-tanque{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:12px}
+.btn-alimentar{
+  min-height:68px;font-family:var(--fonte-titulo);font-weight:400;font-size:clamp(1.35rem,4.6vw,1.75rem);letter-spacing:.02em;
+  border-radius:999px;box-shadow:5px 5px 0 var(--sombra);
+}
+.btn-alimentar:active{box-shadow:1px 1px 0 var(--sombra);transform:translate(4px,4px)}
+.btn-alimentar .emo{font-size:1.8rem;display:inline-block}
+.btn-alimentar:not(:disabled):hover .emo{animation:pular .6s}
+
+.chips{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:16px}
+.chip{
+  border:3px solid var(--borda);border-radius:16px;padding:10px 12px;background:var(--cartao-2);
+  display:flex;gap:10px;align-items:center;min-width:0;
+}
+.chip .emo{font-size:1.7rem;flex:none}
+.chip b{display:block;font-size:1.15rem;font-weight:900;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.chip small{display:block;color:var(--tinta-suave);font-weight:700;font-size:.82rem;line-height:1.25}
+.chip.alerta{background:color-mix(in srgb,var(--sol) 30%,var(--cartao))}
+.chip>div{min-width:0}
+
+/* ================= HORÁRIOS ================= */
+.lista-horarios{display:grid;gap:10px;margin:0;padding:0;list-style:none}
+.linha-horario{
+  display:flex;align-items:center;gap:clamp(6px,2vw,12px);padding:10px clamp(8px,2.5vw,12px);border:3px solid var(--borda);border-radius:16px;
+  background:var(--cartao-2);
+}
+.linha-horario.inativo{opacity:.6}
+.linha-horario .icone{font-size:1.5rem}
+.linha-horario input[type=time]{
+  flex:1 1 0;width:100%;min-width:0;min-height:44px;border:0;background:transparent;font-family:var(--fonte-titulo);font-size:clamp(1.25rem,5vw,1.6rem);
+  color:var(--tinta);letter-spacing:.03em;padding:0 4px;
+}
+.btn-lixo{border:0;background:none;font-size:1.3rem;cursor:pointer;width:44px;height:44px;border-radius:12px}
+.btn-lixo:hover{background:color-mix(in srgb,var(--coral) 20%,transparent)}
+.vazio{padding:18px;text-align:center;border:3px dashed var(--borda);border-radius:16px;color:var(--tinta-suave)}
+
+.porcao{margin-top:18px;padding-top:16px;border-top:3px dotted var(--borda);display:grid;gap:14px}
+.bloco-porcao{border:3px solid var(--borda);border-radius:16px;padding:12px 14px;background:var(--cartao-2);display:grid;gap:12px}
+.bloco-porcao h3{font-family:var(--fonte-titulo);font-weight:400;font-size:1.25rem;margin:0}
+.porcao label{font-weight:900;display:flex;justify-content:space-between;align-items:center;gap:8px}
+.porcao output{font-family:var(--fonte-titulo);font-size:1.3rem;background:var(--sol);color:#17324D;border:3px solid var(--borda);border-radius:12px;padding:0 10px}
+input[type=range]{width:100%;accent-color:var(--coral);height:32px;margin:6px 0 0}
+.passo{display:flex;align-items:center;gap:12px;margin-top:6px}
+.passo button{width:48px;height:48px;border-radius:14px;border:3px solid var(--borda);background:var(--cartao-2);font-size:1.5rem;font-weight:900;cursor:pointer;box-shadow:3px 3px 0 var(--sombra)}
+.passo button:active{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--sombra)}
+.passo .valor{font-family:var(--fonte-titulo);font-size:1.8rem;min-width:2ch;text-align:center}
+.passo .pontos{font-size:1.2rem;letter-spacing:2px}
+.salvar-linha{display:flex;flex-wrap:wrap;gap:12px;margin-top:18px;align-items:center}
+.pendente{font-weight:900;color:var(--coral)}
+
+/* ================= HISTÓRICO ================= */
+.topo-hist{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:12px;margin-bottom:12px}
+.topo-hist h2{margin:0}
+.contador{font-weight:900;background:var(--cartao-2);border:3px solid var(--borda);border-radius:999px;padding:4px 12px}
+.filtros{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.filtros button{
+  border:3px solid var(--borda);border-radius:999px;padding:6px 14px;background:var(--cartao-2);font-weight:900;cursor:pointer;min-height:40px;
+}
+.filtros button[aria-pressed=true]{background:var(--lagoa);color:#fff}
+.resumo-hist{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:14px}
+.resumo-hist span{border-radius:12px;padding:6px 12px;font-weight:900;border:3px solid var(--borda)}
+.resumo-hist .r1{background:color-mix(in srgb,var(--alga) 25%,var(--cartao))}
+.resumo-hist .r2{background:color-mix(in srgb,var(--sol) 30%,var(--cartao))}
+.resumo-hist .r3{background:color-mix(in srgb,var(--uva) 22%,var(--cartao))}
+.lista-hist{list-style:none;margin:0;padding:0;display:grid;gap:10px;grid-template-columns:minmax(0,1fr);max-height:520px;overflow:auto;padding-right:4px}
+@media (min-width:700px){.lista-hist{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (min-width:1000px){.lista-hist{grid-template-columns:repeat(3,minmax(0,1fr))}}
+.item-hist{display:flex;gap:12px;align-items:center;border:3px solid var(--borda);border-radius:16px;padding:10px 12px;background:var(--cartao-2)}
+.item-hist .selo{
+  width:52px;height:46px;border-radius:14px;display:grid;place-items:center;font-size:1.25rem;border:3px solid var(--borda);flex:none;letter-spacing:-2px;
+}
+.item-hist.agenda .selo{background:var(--sol)}
+.item-hist.manual .selo{background:var(--coral)}
+.item-hist b{display:block;font-weight:900}
+.item-hist small{color:var(--tinta-suave);font-weight:700}
+.item-hist .num{margin-left:auto;font-family:var(--fonte-titulo);color:var(--tinta-suave);font-size:1.1rem}
+.cache-info{font-size:.88rem;color:var(--tinta-suave);margin:0 0 10px}
+
+/* ================= RODAPÉ / TOAST / DIÁLOGO ================= */
+.rodape{text-align:center;color:var(--tinta-suave);font-size:.88rem;padding:0 16px 30px}
+.rodape a{color:inherit}
+.toasts{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);display:grid;gap:10px;z-index:50;width:min(92vw,420px)}
+.toast{
+  background:var(--cartao);border:3px solid var(--borda);border-radius:16px;padding:12px 16px;font-weight:900;
+  box-shadow:4px 4px 0 var(--sombra);display:flex;gap:10px;align-items:center;animation:entrar .35s cubic-bezier(.3,1.6,.5,1);
+}
+.toast.ok{background:color-mix(in srgb,var(--alga) 22%,var(--cartao))}
+.toast.erro{background:color-mix(in srgb,var(--coral) 22%,var(--cartao))}
+@keyframes entrar{from{transform:translateY(30px);opacity:0}}
+dialog{
+  border:3px solid var(--borda);border-radius:var(--raio);padding:22px;max-width:min(92vw,400px);
+  background:var(--cartao);color:var(--tinta);box-shadow:6px 6px 0 var(--sombra);text-align:center;
+}
+dialog::backdrop{background:rgba(13,27,46,.55)}
+dialog .grande{font-size:3rem;margin:0}
+dialog h3{font-family:var(--fonte-titulo);font-weight:400;font-size:1.5rem;margin:6px 0}
+dialog .botoes{display:flex;gap:12px;justify-content:center;margin-top:18px;flex-wrap:wrap}
+
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation-duration:.01ms !important;animation-iteration-count:1 !important;transition-duration:.01ms !important}
+  .nadador{animation:none;left:var(--parado) !important}
+  .nadador .corpo{animation:none}
+}
+@media (max-width:420px){
+  .acoes-principais{grid-template-columns:minmax(0,1fr)}
+  .chip .emo{font-size:1.4rem}
+  .acoes-tanque{grid-template-columns:minmax(0,1fr)}
+}
+</style>
+</head>
+<body>
+
+<header class="topo">
+  <div class="barra">
+    <span id="pilula" class="pilula" role="status"><i></i><span id="pilulaTexto">Sem conexão</span></span>
+    <button id="btnTema" class="btn-icone" type="button" aria-label="Alternar modo claro e escuro">🌙</button>
+  </div>
+  <div class="marca">
+    <span class="lado peixe" aria-hidden="true">🐠</span>
+    <h1 class="georgina" aria-label="Georgina">
+      <span style="--c:#FF6B57;--r:-6deg;--d:.00s" aria-hidden="true">G</span>
+      <span style="--c:#FFC233;--r:4deg;--d:.06s" aria-hidden="true">e</span>
+      <span style="--c:#22B07D;--r:-3deg;--d:.12s" aria-hidden="true">o</span>
+      <span style="--c:#2E86F0;--r:5deg;--d:.18s" aria-hidden="true">r</span>
+      <span style="--c:#8B5CF6;--r:-5deg;--d:.24s" aria-hidden="true">g</span>
+      <span style="--c:#FF6B57;--r:3deg;--d:.30s" aria-hidden="true">i</span>
+      <span style="--c:#FFC233;--r:-4deg;--d:.36s" aria-hidden="true">n</span>
+      <span style="--c:#22B07D;--r:6deg;--d:.42s" aria-hidden="true">a</span>
+    </h1>
+    <span class="lado tarta" aria-hidden="true">🐢</span>
+  </div>
+  <p class="sub">Alimentador de peixes e tartarugas</p>
+</header>
+
+<main class="grade">
+
+  <!-- ============ CONEXÃO ============ -->
+  <section class="cartao conexao" aria-labelledby="tituloConexao">
+    <details id="detalhesConexao" open>
+      <summary>
+        <h2 id="tituloConexao"><span class="emo" aria-hidden="true">🔌</span>Conexão com a Georgina</h2>
+        <span class="seta" aria-hidden="true">▾</span>
+      </summary>
+      <form id="formConexao" class="form-conexao" autocomplete="off">
+        <div class="campo">
+          <label for="campoHost">Endereço da Georgina</label>
+          <input id="campoHost" type="text" inputmode="url" placeholder="georgina.local ou 192.168.0.25" spellcheck="false" autocapitalize="off">
+        </div>
+        <div class="campo">
+          <label for="campoChave">Chave da API</label>
+          <div class="com-olho">
+            <input id="campoChave" type="password" placeholder="A mesma chave do código da ESP" spellcheck="false" autocapitalize="off">
+            <button id="btnOlho" type="button" aria-label="Mostrar chave">👁️</button>
+          </div>
+        </div>
+        <button class="btn lagoa" type="submit">🔗 Conectar</button>
+      </form>
+      <div class="opcoes-conexao">
+        <label class="troca">
+          <span class="chave"><input id="chkDemo" type="checkbox"><span></span></span>
+          Modo demonstração (sem ESP)
+        </label>
+        <a id="linkEsp" class="btn sol pequeno" href="#" hidden>📲 Abrir o painel direto pela ESP</a>
+      </div>
+      <p class="dica">O endereço aparece no Monitor Serial da Arduino IDE quando a ESP conecta no Wi-Fi. O aparelho precisa estar na mesma rede.</p>
+      <div id="avisoConexao" class="aviso" hidden></div>
+    </details>
+  </section>
+
+  <!-- ============ TANQUES ============ -->
+  <section class="cartao" aria-labelledby="tituloAquario">
+    <h2 id="tituloAquario"><span class="emo" aria-hidden="true">🫧</span>Os tanques</h2>
+    <div class="tanques">
+
+      <div class="tanque">
+        <h3><span>🐠 Peixes</span><span id="estado-peixes" class="estado-tanque">pronto</span></h3>
+        <div class="aquario peixes" data-tanque="peixes" aria-hidden="true">
+          <div class="superficie"></div>
+          <div class="dispenser"><div class="caixa">ração</div><div class="tampa"></div></div>
+          <div class="balao">Hora do lanche! 😋</div>
+          <span class="nadador" style="top:40%;--t:16s;--a:0s;--parado:12%"><span class="corpo">🐠</span></span>
+          <span class="nadador" style="top:58%;--t:21s;--a:-7s;--parado:58%"><span class="corpo">🐟</span></span>
+          <span class="nadador" style="top:30%;--t:25s;--a:-15s;--parado:70%"><span class="corpo">🐡</span></span>
+          <span class="nadador" style="top:50%;--t:19s;--a:-11s;--parado:32%"><span class="corpo">🐠</span></span>
+          <span class="bolha" style="left:14%;--t:6s;--a:0s"></span>
+          <span class="bolha" style="left:17%;--t:6s;--a:-2.4s;width:8px;height:8px"></span>
+          <span class="bolha" style="left:84%;--t:7s;--a:-4s"></span>
+          <span class="planta" style="left:5%">🌿</span>
+          <span class="planta p2" style="left:24%">🌱</span>
+          <span class="planta" style="right:6%">🌿</span>
+          <span class="pedra" style="right:28%;font-size:1.4rem">🐚</span>
+          <div class="areia"></div>
+        </div>
+        <button class="btn pequeno btn-testar" type="button" data-testar="peixes">🔧 Testar tampa</button>
+      </div>
+
+      <div class="tanque">
+        <h3><span>🐢 Tartarugas</span><span id="estado-tartarugas" class="estado-tanque">pronto</span></h3>
+        <div class="aquario tartarugas" data-tanque="tartarugas" aria-hidden="true">
+          <div class="superficie"></div>
+          <div class="dispenser"><div class="caixa">ração</div><div class="tampa"></div></div>
+          <div class="balao">Hora do lanche! 😋</div>
+          <span class="nadador" style="top:42%;--t:30s;--a:-4s;--parado:20%"><span class="corpo">🐢</span></span>
+          <span class="nadador" style="top:60%;--t:38s;--a:-20s;--parado:55%"><span class="corpo">🐢</span></span>
+          <span class="bolha" style="left:30%;--t:7s;--a:-1s"></span>
+          <span class="planta" style="left:6%">🌿</span>
+          <span class="planta p2" style="left:40%">🌱</span>
+          <span class="ilha">🪨</span><span class="sol-tarta">🐢</span>
+          <div class="areia"></div>
+        </div>
+        <button class="btn pequeno btn-testar" type="button" data-testar="tartarugas">🔧 Testar tampa</button>
+      </div>
+    </div>
+
+    <div class="acoes-principais">
+      <button id="btnAlimentar" class="btn coral btn-alimentar" type="button" data-alimentar="todos"><span class="emo" aria-hidden="true">🍤</span>Alimentar os dois</button>
+    </div>
+    <div class="acoes-tanque">
+      <button class="btn lagoa" type="button" data-alimentar="peixes">🐠 Só os peixes</button>
+      <button class="btn alga" type="button" data-alimentar="tartarugas">🐢 Só as tartarugas</button>
+    </div>
+
+    <div class="chips">
+      <div id="chipRelogio" class="chip"><span class="emo" aria-hidden="true">🕒</span><div><b id="vRelogio">--:--:--</b><small id="sRelogio">Relógio da Georgina</small></div></div>
+      <div class="chip"><span class="emo" aria-hidden="true">⏭️</span><div><b id="vProxima">--:--</b><small id="sProxima">Próxima comida</small></div></div>
+      <div class="chip"><span class="emo" aria-hidden="true">🍽️</span><div><b id="vHoje">-</b><small id="sHoje">Comidas hoje</small></div></div>
+      <div class="chip"><span class="emo" aria-hidden="true">📶</span><div><b id="vRede">-</b><small id="sRede">Wi-Fi</small></div></div>
+    </div>
+    <div class="salvar-linha">
+      <button id="btnHora" class="btn pequeno" type="button">⏱️ Acertar relógio com este aparelho</button>
+    </div>
+  </section>
+
+  <!-- ============ HORÁRIOS ============ -->
+  <section class="cartao" aria-labelledby="tituloHorarios">
+    <h2 id="tituloHorarios"><span class="emo" aria-hidden="true">⏰</span>Horários de comida</h2>
+    <ul id="listaHorarios" class="lista-horarios"></ul>
+    <div class="salvar-linha" style="margin-top:12px">
+      <button id="btnAdicionar" class="btn pequeno alga" type="button">➕ Adicionar horário</button>
+      <span id="contHorarios" class="dica" style="margin:0"></span>
+    </div>
+
+    <div class="porcao">
+      <p class="dica" style="margin:0">Nos horários acima, os dois tanques são alimentados ao mesmo tempo. Cada um tem sua porção:</p>
+      <div class="bloco-porcao" data-porcao="peixes">
+        <h3>🐠 Peixes</h3>
+        <div>
+          <label for="tempo-peixes">Tempo com a tampa aberta <output id="out-peixes" for="tempo-peixes">1,0 s</output></label>
+          <input id="tempo-peixes" class="campo-tempo" type="range" min="0.5" max="5" step="0.5" value="1">
+        </div>
+        <div>
+          <span style="font-weight:900">Quantas vezes abre</span>
+          <div class="passo">
+            <button class="menos" type="button" aria-label="Diminuir repetições dos peixes">−</button>
+            <span id="rep-peixes" class="valor" aria-live="polite">1</span>
+            <button class="mais" type="button" aria-label="Aumentar repetições dos peixes">+</button>
+            <span id="pontos-peixes" class="pontos" aria-hidden="true">🟠</span>
+          </div>
+        </div>
+      </div>
+      <div class="bloco-porcao" data-porcao="tartarugas">
+        <h3>🐢 Tartarugas</h3>
+        <div>
+          <label for="tempo-tartarugas">Tempo com a tampa aberta <output id="out-tartarugas" for="tempo-tartarugas">1,0 s</output></label>
+          <input id="tempo-tartarugas" class="campo-tempo" type="range" min="0.5" max="5" step="0.5" value="1">
+        </div>
+        <div>
+          <span style="font-weight:900">Quantas vezes abre</span>
+          <div class="passo">
+            <button class="menos" type="button" aria-label="Diminuir repetições dos tartarugas">−</button>
+            <span id="rep-tartarugas" class="valor" aria-live="polite">1</span>
+            <button class="mais" type="button" aria-label="Aumentar repetições dos tartarugas">+</button>
+            <span id="pontos-tartarugas" class="pontos" aria-hidden="true">🟠</span>
+          </div>
+        </div>
+      </div>
+      <p class="dica" style="margin:0">Mais tempo aberto ou mais aberturas, mais ração cai.</p>
+    </div>
+
+    <div class="salvar-linha">
+      <button id="btnSalvar" class="btn lagoa" type="button">💾 Salvar horários</button>
+      <button id="btnDescartar" class="btn pequeno" type="button" hidden>↩️ Desfazer</button>
+      <span id="pendente" class="pendente" hidden>Alterações não salvas</span>
+    </div>
+  </section>
+
+  <!-- ============ HISTÓRICO ============ -->
+  <section class="cartao historico" aria-labelledby="tituloHist">
+    <div class="topo-hist">
+      <h2 id="tituloHist"><span class="emo" aria-hidden="true">📒</span>Últimas comidas</h2>
+      <span id="contHist" class="contador">0 de 65</span>
+    </div>
+    <p id="cacheInfo" class="cache-info" hidden></p>
+    <div class="resumo-hist">
+      <span class="r1" id="rHoje">Hoje: 0</span>
+      <span class="r2" id="rAgenda">Pelo horário: 0</span>
+      <span class="r3" id="rManual">Pelo painel: 0</span>
+    </div>
+    <div class="filtros" role="group" aria-label="Filtrar histórico">
+      <button type="button" data-filtro="todas" aria-pressed="true">Todas</button>
+      <button type="button" data-filtro="agenda" aria-pressed="false">⏰ Pelo horário</button>
+      <button type="button" data-filtro="manual" aria-pressed="false">👆 Pelo painel</button>
+    </div>
+    <ul id="listaHist" class="lista-hist"></ul>
+    <div class="salvar-linha">
+      <button id="btnAtualizarHist" class="btn pequeno" type="button">🔄 Atualizar</button>
+      <button id="btnLimpar" class="btn pequeno" type="button">🧹 Apagar histórico</button>
+    </div>
+  </section>
+</main>
+
+<footer class="rodape">
+  <span id="rodapeInfo">Painel Georgina</span>
+</footer>
+
+<div id="toasts" class="toasts" aria-live="polite"></div>
+
+<dialog id="dlgConfirmar">
+  <p class="grande" aria-hidden="true">🧹</p>
+  <h3>Apagar o histórico?</h3>
+  <p>As últimas comidas guardadas na Georgina serão apagadas. Os horários continuam iguais.</p>
+  <div class="botoes">
+    <button class="btn" value="nao" id="dlgNao" type="button">Cancelar</button>
+    <button class="btn coral" value="sim" id="dlgSim" type="button">Apagar histórico</button>
+  </div>
+</dialog>
+
+<script>
+"use strict";
+
+/* =====================================================================
+   GEORGINA - painel (2 tanques: peixes e tartarugas)
+   Conversa com a ESP32 por GET/POST (API com chave).
+   Guarda endereço, chave, tema e os últimos dados no navegador.
+   ===================================================================== */
+
+const FUSO = "America/Sao_Paulo";
+const MAX_HORARIOS = 6;
+const INTERVALO_STATUS = 5000;
+const INTERVALO_HIST = 30000;
+const PAUSA_SERVO = 700;
+
+const TANQUES = ["peixes", "tartarugas"];
+const EMOJI = { peixes: "🐠", tartarugas: "🐢" };
+const NOME = { peixes: "peixes", tartarugas: "tartarugas" };
+
+const $ = (s) => document.querySelector(s);
+const $$ = (s) => Array.from(document.querySelectorAll(s));
+
+/* ---------------- memória do navegador ---------------- */
+const Memoria = {
+  ler(chave, padrao) {
+    try {
+      const v = localStorage.getItem("georgina." + chave);
+      return v === null ? padrao : JSON.parse(v);
+    } catch (e) { return padrao; }
+  },
+  gravar(chave, valor) {
+    try { localStorage.setItem("georgina." + chave, JSON.stringify(valor)); } catch (e) {}
+  }
+};
+
+/* ---------------- estado ---------------- */
+const abertoPelaEsp = location.protocol === "http:" &&
+  !["localhost", "127.0.0.1", ""].includes(location.hostname);
+
+const conexaoSalva = Memoria.ler("conexao", {});
+const estado = {
+  host: conexaoSalva.host || (abertoPelaEsp ? location.host : ""),
+  chave: conexaoSalva.chave || "",
+  demo: !!conexaoSalva.demo,
+  conectado: false,
+  status: Memoria.ler("cache2.status", null),
+  historico: Memoria.ler("cache2.historico", null),
+  quandoCache: Memoria.ler("cache2.quando", null),
+  edicao: null,           // cópia editável da configuração
+  alterado: false,
+  filtro: "todas",
+  diferencaRelogio: null, // ms entre o relógio da ESP e o deste aparelho
+  ultimoTotal: null,
+  animando: { peixes: false, tartarugas: false },
+  timerStatus: null,
+  ultimoHist: 0
+};
+
+/* ---------------- utilidades ---------------- */
+const fmtPartes = new Intl.DateTimeFormat("pt-BR", {
+  timeZone: FUSO, year: "numeric", month: "2-digit", day: "2-digit",
+  hour: "2-digit", minute: "2-digit", second: "2-digit", hourCycle: "h23"
+});
+function partes(ms) {
+  const p = {};
+  for (const x of fmtPartes.formatToParts(new Date(ms))) p[x.type] = x.value;
+  return { d: p.day, mo: p.month, y: p.year, h: +p.hour, m: +p.minute, s: +p.second,
+           hh: p.hour, mm: p.minute, ss: p.second, dia: p.year + "-" + p.month + "-" + p.day };
+}
+function agoraEsp() {
+  if (estado.diferencaRelogio === null) return null;
+  return Date.now() + estado.diferencaRelogio;
+}
+function minParaTexto(min) {
+  return String(Math.floor(min / 60)).padStart(2, "0") + ":" + String(min % 60).padStart(2, "0");
+}
+function textoFaltam(min) {
+  if (min <= 0) return "agora";
+  const h = Math.floor(min / 60), m = min % 60;
+  if (h === 0) return "daqui a " + m + " min";
+  return "daqui a " + h + " h" + (m ? " " + String(m).padStart(2, "0") + " min" : "");
+}
+function horaParaMin(txt) {
+  const [h, m] = String(txt).split(":").map(Number);
+  return h * 60 + m;
+}
+function tempoTexto(ms) {
+  return (ms / 1000).toLocaleString("pt-BR", { minimumFractionDigits: 1, maximumFractionDigits: 1 }) + " s";
+}
+function tanquesDe(alvo) {
+  return alvo === "peixes" || alvo === "tartarugas" ? [alvo] : TANQUES.slice();
+}
+function duracaoPorcao(cfg, tanques, teste) {
+  let maior = 0;
+  for (const t of tanques) {
+    const p = (cfg && cfg[t]) || { tempoMs: 1000, repeticoes: 1 };
+    maior = Math.max(maior, (teste ? 1 : p.repeticoes) * (p.tempoMs + PAUSA_SERVO));
+  }
+  return maior;
+}
+const dormir = (ms) => new Promise((r) => setTimeout(r, ms));
+
+/* =====================================================================
+   API
+   ===================================================================== */
+class ErroApi extends Error {
+  constructor(msg, codigo, tipo) { super(msg); this.codigo = codigo; this.tipo = tipo; }
+}
+
+function baseUrl() {
+  const h = (estado.host || "").trim().replace(/^https?:\/\//i, "").replace(/\/+$/, "");
+  return "http://" + h;
+}
+
+async function api(caminho, metodo = "GET", corpo) {
+  if (estado.demo) return Demo.chamar(caminho, metodo, corpo);
+  if (!estado.host) throw new ErroApi("Digite o endereço da Georgina.", 0, "config");
+  if (!estado.chave) throw new ErroApi("Digite a chave da API.", 0, "config");
+
+  const controle = new AbortController();
+  const limite = setTimeout(() => controle.abort(), 7000);
+  const opcoes = {
+    method: metodo,
+    headers: { "X-API-Key": estado.chave },
+    cache: "no-store",
+    signal: controle.signal
+  };
+  if (corpo !== undefined) {
+    opcoes.headers["Content-Type"] = "application/json";
+    opcoes.body = JSON.stringify(corpo);
+  }
+  // Chrome: avisa que o pedido vai para a rede local (libera a página HTTPS falar com a ESP).
+  if (location.protocol === "https:") opcoes.targetAddressSpace = "local";
+
+  let resposta;
+  try {
+    resposta = await fetch(baseUrl() + caminho, opcoes);
+  } catch (e) {
+    clearTimeout(limite);
+    if (e.name === "AbortError") throw new ErroApi("A Georgina demorou para responder.", 0, "tempo");
+    throw new ErroApi("Não consegui falar com a Georgina.", 0, "rede");
+  }
+  clearTimeout(limite);
+
+  let dados = {};
+  try { dados = await resposta.json(); } catch (e) {}
+  if (!resposta.ok) {
+    if (resposta.status === 401) throw new ErroApi("Chave da API incorreta.", 401, "chave");
+    throw new ErroApi(dados.erro || ("Erro " + resposta.status), resposta.status, "api");
+  }
+  return dados;
+}
+
+/* =====================================================================
+   MODO DEMONSTRAÇÃO (simula a ESP dentro do navegador)
+   ===================================================================== */
+const Demo = {
+  dados: null,
+  fim: { peixes: 0, tartarugas: 0 },
+  carregar() {
+    this.dados = Memoria.ler("demo2", null) || {
+      config: {
+        horarios: [{ hora: "09:00", ativo: true }, { hora: "16:00", ativo: true }],
+        peixes: { tempoMs: 1000, repeticoes: 1 },
+        tartarugas: { tempoMs: 1000, repeticoes: 1 },
+        maxHorarios: 6
+      },
+      itens: [], total: 0, executados: {}
+    };
+  },
+  salvar() { Memoria.gravar("demo2", this.dados); },
+  ocupado(tanques) { return tanques.some((t) => Date.now() < this.fim[t]); },
+  abrir(tanques, teste) {
+    for (const t of tanques) {
+      this.fim[t] = Date.now() + duracaoPorcao(this.dados.config, [t], teste);
+    }
+  },
+  registrar(origem, tanques) {
+    const d = this.dados;
+    d.total++;
+    const item = { numero: d.total, epoch: Math.floor(Date.now() / 1000), origem, tanques };
+    for (const t of tanques) item[t] = { ...d.config[t] };
+    d.itens.unshift(item);
+    d.itens = d.itens.slice(0, 65);
+    this.abrir(tanques, false);
+    this.salvar();
+  },
+  verificarAgenda() {
+    const p = partes(Date.now());
+    const min = p.h * 60 + p.m;
+    for (const h of this.dados.config.horarios) {
+      const chave = p.dia + "_" + h.hora;
+      if (h.ativo && horaParaMin(h.hora) === min && !this.dados.executados[chave]) {
+        this.dados.executados = { [chave]: true };
+        this.registrar("agenda", TANQUES.slice());
+      }
+    }
+  },
+  async chamar(caminho, metodo, corpo) {
+    if (!this.dados) this.carregar();
+    await dormir(200);
+    this.verificarAgenda();
+    const d = this.dados;
+    const tanques = tanquesDe(corpo && corpo.tanque);
+
+    if (caminho === "/api/status") {
+      const agora = Date.now();
+      const p = partes(agora);
+      const motores = {};
+      for (const t of TANQUES) motores[t] = agora < this.fim[t];
+      return {
+        ok: true, nome: "Georgina", versao: "demo", rede: "Demonstração", ip: "192.168.0.99", sinal: -55,
+        endereco: "http://georgina.local", ligadaHa: Math.floor(performance.now() / 1000),
+        horaValida: true, fonteHora: "navegador", agora: Math.floor(agora / 1000),
+        horaLocal: `${p.d}/${p.mo}/${p.y} ${p.hh}:${p.mm}:${p.ss}`, minutoDoDia: p.h * 60 + p.m,
+        alimentando: TANQUES.some((t) => motores[t]), motores,
+        total: d.total, registros: d.itens.length, maxRegistros: 65,
+        ultima: d.itens[0] || undefined, config: d.config
+      };
+    }
+    if (caminho === "/api/historico") {
+      return { ok: true, total: d.total, registros: d.itens.length, maxRegistros: 65, itens: d.itens };
+    }
+    if (caminho === "/api/alimentar") {
+      if (this.ocupado(tanques)) throw new ErroApi("Já estou alimentando, aguarde um pouquinho", 409, "api");
+      this.registrar("manual", tanques);
+      return { ok: true, numero: d.total, tanques, duracaoMs: duracaoPorcao(d.config, tanques, false) };
+    }
+    if (caminho === "/api/testar") {
+      if (this.ocupado(tanques)) throw new ErroApi("Já estou alimentando, aguarde um pouquinho", 409, "api");
+      this.abrir(tanques, true);
+      return { ok: true, tanques, duracaoMs: duracaoPorcao(d.config, tanques, true) };
+    }
+    if (caminho === "/api/config") {
+      d.config = { ...d.config, ...corpo, maxHorarios: 6 };
+      this.salvar();
+      return { ok: true, mensagem: "Configuração salva", config: d.config };
+    }
+    if (caminho === "/api/hora") return { ok: true, mensagem: "Relógio acertado" };
+    if (caminho === "/api/historico/limpar") {
+      d.itens = []; this.salvar();
+      return { ok: true, mensagem: "Histórico apagado" };
+    }
+    throw new ErroApi("Rota não encontrada", 404, "api");
+  }
+};
+
+/* =====================================================================
+   INTERFACE: mensagens
+   ===================================================================== */
+function avisar(texto, tipo = "ok", emoji) {
+  const caixa = document.createElement("div");
+  caixa.className = "toast " + tipo;
+  caixa.innerHTML = `<span aria-hidden="true">${emoji || (tipo === "erro" ? "⚠️" : "✅")}</span><span></span>`;
+  caixa.lastChild.textContent = texto;
+  $("#toasts").appendChild(caixa);
+  setTimeout(() => caixa.remove(), 3800);
+}
+
+function mostrarPilula(tipo, texto) {
+  $("#pilula").className = "pilula " + tipo;
+  $("#pilulaTexto").textContent = texto;
+}
+
+function mostrarAvisoConexao(erro) {
+  const caixa = $("#avisoConexao");
+  if (!erro) { caixa.hidden = true; return; }
+  caixa.hidden = false;
+  caixa.className = "aviso erro";
+  caixa.innerHTML = "";
+  const add = (t) => { const p = document.createElement("p"); p.textContent = t; caixa.appendChild(p); };
+
+  add("⚠️ " + erro.message);
+  if (erro.tipo === "rede" || erro.tipo === "tempo") {
+    add("Confira se a Georgina está ligada e se este aparelho está no mesmo Wi-Fi que ela.");
+    if (location.protocol === "https:") {
+      add("No Chrome, quando aparecer o pedido de acesso à rede local, toque em Permitir.");
+      add("No iPhone ou iPad, toque em “Abrir o painel direto pela ESP”.");
+    }
+  } else if (erro.tipo === "chave") {
+    add("Use a mesma chave escrita em CHAVE_API no código da ESP.");
+  }
+}
+
+/* =====================================================================
+   INTERFACE: status, relógio e chips
+   ===================================================================== */
+function atualizarRelogio() {
+  const s = estado.status;
+  const chip = $("#chipRelogio");
+  const ms = agoraEsp();
+
+  if (!s || !estado.conectado || !s.horaValida || ms === null) {
+    const semHora = !!s && estado.conectado && !s.horaValida;
+    $("#vRelogio").textContent = semHora ? "Sem hora" : "--:--:--";
+    $("#sRelogio").textContent = semHora ? "Toque em acertar relógio" : "Relógio da Georgina";
+    chip.classList.toggle("alerta", semHora);
+    $("#vProxima").textContent = "--:--";
+    $("#sProxima").textContent = "Próxima comida";
+    return;
+  }
+  chip.classList.remove("alerta");
+  const p = partes(ms);
+  $("#vRelogio").textContent = `${p.hh}:${p.mm}:${p.ss}`;
+  $("#sRelogio").textContent = "Hora da Georgina" + (s.fonteHora === "navegador" ? " (acertada aqui)" : "");
+
+  const cfg = s.config || { horarios: [] };
+  const minAgora = p.h * 60 + p.m;
+  const ativos = cfg.horarios.filter((h) => h.ativo).map((h) => horaParaMin(h.hora)).sort((a, b) => a - b);
+  if (!ativos.length) {
+    $("#vProxima").textContent = "Nenhuma";
+    $("#sProxima").textContent = "Nenhum horário ligado";
+    return;
+  }
+  let prox = ativos.find((m) => m > minAgora);
+  let amanha = false;
+  if (prox === undefined) { prox = ativos[0]; amanha = true; }
+  const faltam = amanha ? prox + 1440 - minAgora : prox - minAgora;
+  $("#vProxima").textContent = minParaTexto(prox);
+  $("#sProxima").textContent = (amanha ? "amanhã, " : "") + textoFaltam(faltam);
+}
+
+function textoSinal(rssi) {
+  if (rssi >= -60) return "Sinal ótimo";
+  if (rssi >= -70) return "Sinal bom";
+  if (rssi >= -80) return "Sinal fraco";
+  return "Sinal muito fraco";
+}
+
+function desenharEstadoTanques() {
+  const motores = (estado.status && estado.conectado && estado.status.motores) || {};
+  for (const t of TANQUES) {
+    const el = $("#estado-" + t);
+    const abrindo = !!motores[t] || estado.animando[t];
+    el.textContent = abrindo ? "abrindo" : estado.conectado ? "pronto" : "sem conexão";
+    el.classList.toggle("abrindo", abrindo);
+  }
+}
+
+function desenharStatus() {
+  const s = estado.status;
+  if (!s) return;
+  $("#vRede").textContent = s.rede || "-";
+  $("#sRede").textContent = (s.sinal !== undefined ? textoSinal(s.sinal) : "Wi-Fi") + (s.ip ? ", IP " + s.ip : "");
+  $("#rodapeInfo").textContent =
+    `Georgina ${s.versao ? "v" + s.versao : ""} no endereço ${s.ip || "?"}` + (s.endereco ? ` (ou ${s.endereco})` : "");
+  atualizarRelogio();
+  desenharResumo();
+  desenharEstadoTanques();
+}
+
+/* =====================================================================
+   INTERFACE: horários e porções
+   ===================================================================== */
+function copiaConfig(cfg) {
+  const c = { horarios: (cfg.horarios || []).map((h) => ({ hora: h.hora, ativo: !!h.ativo })) };
+  for (const t of TANQUES) {
+    const p = cfg[t] || {};
+    c[t] = { tempoMs: p.tempoMs || 1000, repeticoes: p.repeticoes || 1 };
+  }
+  return c;
+}
+
+function marcarAlterado(sim) {
+  estado.alterado = sim;
+  $("#pendente").hidden = !sim;
+  $("#btnDescartar").hidden = !sim;
+}
+
+function desenharPorcoes() {
+  const cfg = estado.edicao;
+  for (const t of TANQUES) {
+    const p = cfg ? cfg[t] : { tempoMs: 1000, repeticoes: 1 };
+    $("#tempo-" + t).value = p.tempoMs / 1000;
+    $("#out-" + t).textContent = tempoTexto(p.tempoMs);
+    $("#rep-" + t).textContent = p.repeticoes;
+    $("#pontos-" + t).textContent = "🟠".repeat(p.repeticoes);
+  }
+}
+
+function desenharHorarios() {
+  const cfg = estado.edicao;
+  const lista = $("#listaHorarios");
+  lista.innerHTML = "";
+
+  if (!cfg) {
+    lista.innerHTML = `<li class="vazio">Conecte a Georgina para ver os horários.</li>`;
+    $("#btnAdicionar").disabled = true;
+    $("#contHorarios").textContent = "";
+    desenharPorcoes();
+    return;
+  }
+
+  if (!cfg.horarios.length) {
+    lista.innerHTML = `<li class="vazio">Nenhum horário ainda. Toque em “Adicionar horário”.</li>`;
+  }
+
+  const icones = ["🌙", "🌅", "☀️", "🌤️", "🌇", "🌙"];
+  cfg.horarios.forEach((h, i) => {
+    const li = document.createElement("li");
+    li.className = "linha-horario" + (h.ativo ? "" : " inativo");
+    li.innerHTML = `
+      <span class="icone" aria-hidden="true">${icones[Math.floor(horaParaMin(h.hora) / 240)] || "⏰"}</span>
+      <input type="time" value="${h.hora}" aria-label="Horário ${i + 1}" required>
+      <label class="chave" title="Ligar ou desligar"><input type="checkbox" ${h.ativo ? "checked" : ""} aria-label="Horário ${i + 1} ligado"><span></span></label>
+      <button class="btn-lixo" type="button" aria-label="Remover horário ${i + 1}">🗑️</button>`;
+    const [campoHora, campoAtivo] = li.querySelectorAll("input");
+    campoHora.addEventListener("change", () => {
+      if (!campoHora.value) return;
+      h.hora = campoHora.value.slice(0, 5);
+      marcarAlterado(true);
+      desenharHorarios();
+    });
+    campoAtivo.addEventListener("change", () => {
+      h.ativo = campoAtivo.checked;
+      li.classList.toggle("inativo", !h.ativo);
+      marcarAlterado(true);
+    });
+    li.querySelector(".btn-lixo").addEventListener("click", () => {
+      cfg.horarios.splice(i, 1);
+      marcarAlterado(true);
+      desenharHorarios();
+    });
+    lista.appendChild(li);
+  });
+
+  $("#btnAdicionar").disabled = cfg.horarios.length >= MAX_HORARIOS;
+  $("#contHorarios").textContent = `${cfg.horarios.length} de ${MAX_HORARIOS} horários`;
+  desenharPorcoes();
+}
+
+function receberConfig(cfg, forcar) {
+  if (!cfg) return;
+  if (estado.alterado && !forcar) return; // não apaga o que a pessoa está editando
+  estado.edicao = copiaConfig(cfg);
+  marcarAlterado(false);
+  desenharHorarios();
+}
+
+/* =====================================================================
+   INTERFACE: histórico
+   ===================================================================== */
+function diaDe(epoch) { return partes(epoch * 1000).dia; }
+function tanquesItem(x) { return (x.tanques && x.tanques.length) ? x.tanques : TANQUES; }
+
+function desenharResumo() {
+  const h = estado.historico;
+  const itens = (h && h.itens) || [];
+  const hoje = partes(agoraEsp() || Date.now()).dia;
+  const deHoje = itens.filter((x) => x.epoch && diaDe(x.epoch) === hoje);
+  const conta = (t) => deHoje.filter((x) => tanquesItem(x).includes(t)).length;
+  $("#vHoje").textContent = `🐠 ${conta("peixes")}  🐢 ${conta("tartarugas")}`;
+  $("#sHoje").textContent = "Comidas hoje" + (h ? ` (total: ${h.total})` : "");
+  $("#rHoje").textContent = "🍽️ Hoje: " + deHoje.length;
+  $("#rAgenda").textContent = "⏰ Pelo horário: " + itens.filter((x) => x.origem === "agenda").length;
+  $("#rManual").textContent = "👆 Pelo painel: " + itens.filter((x) => x.origem === "manual").length;
+}
+
+function textoDia(epoch) {
+  const ref = agoraEsp() || Date.now();
+  const hoje = partes(ref).dia;
+  const ontem = partes(ref - 86400000).dia;
+  const p = partes(epoch * 1000);
+  const quando = p.dia === hoje ? "Hoje" : p.dia === ontem ? "Ontem" : `${p.d}/${p.mo}/${p.y}`;
+  return `${quando} às ${p.hh}:${p.mm}`;
+}
+
+function detalheItem(x) {
+  const como = x.origem === "agenda" ? "Pelo horário" : "Pelo painel";
+  const partesTexto = tanquesItem(x).map((t) => {
+    const p = x[t];
+    return p ? `${NOME[t]} ${p.repeticoes}× ${tempoTexto(p.tempoMs)}` : NOME[t];
+  });
+  return `${como}: ${partesTexto.join(" e ")}`;
+}
+
+function desenharHistorico() {
+  const h = estado.historico;
+  const lista = $("#listaHist");
+  lista.innerHTML = "";
+  const itens = ((h && h.itens) || []).filter((x) => estado.filtro === "todas" || x.origem === estado.filtro);
+
+  $("#contHist").textContent = `${h ? h.registros : 0} de ${h ? h.maxRegistros : 65}`;
+
+  if (!itens.length) {
+    lista.innerHTML = `<li class="vazio" style="grid-column:1/-1">${h ? "Nenhuma comida registrada aqui ainda. 🐟" : "Conecte a Georgina para ver o histórico."}</li>`;
+  }
+
+  for (const x of itens) {
+    const li = document.createElement("li");
+    li.className = "item-hist " + x.origem;
+    li.innerHTML = `
+      <span class="selo" aria-hidden="true">${tanquesItem(x).map((t) => EMOJI[t]).join("")}</span>
+      <div><b></b><small></small></div>
+      <span class="num">#${x.numero}</span>`;
+    li.querySelector("b").textContent = x.epoch ? textoDia(x.epoch) : "Relógio não acertado";
+    li.querySelector("small").textContent = detalheItem(x);
+    lista.appendChild(li);
+  }
+  desenharResumo();
+  desenharCacheInfo();
+}
+
+function desenharCacheInfo() {
+  const info = $("#cacheInfo");
+  if (!estado.conectado && estado.historico && estado.quandoCache && !estado.demo) {
+    const p = partes(estado.quandoCache);
+    info.hidden = false;
+    info.textContent = `📦 Mostrando os dados salvos neste aparelho em ${p.d}/${p.mo} às ${p.hh}:${p.mm}. Conecte para atualizar.`;
+  } else {
+    info.hidden = true;
+  }
+}
+
+function salvarCache() {
+  if (estado.demo) return;
+  estado.quandoCache = Date.now();
+  Memoria.gravar("cache2.status", estado.status);
+  Memoria.gravar("cache2.historico", estado.historico);
+  Memoria.gravar("cache2.quando", estado.quandoCache);
+}
+
+/* =====================================================================
+   ANIMAÇÃO DA COMIDA (em cada tanque que recebeu ração)
+   ===================================================================== */
+function animarTanque(tanque, duracaoMs, mensagem) {
+  const aq = document.querySelector(`.aquario[data-tanque="${tanque}"]`);
+  if (!aq) return;
+  const dur = Math.max(2500, Math.min(duracaoMs || 2500, 16000));
+  aq.querySelector(".balao").textContent = mensagem || "Hora do lanche! 😋";
+  if (estado.animando[tanque]) return;
+  estado.animando[tanque] = true;
+  aq.classList.add("comendo");
+  desenharEstadoTanques();
+
+  const largura = aq.clientWidth;
+  const altura = aq.clientHeight;
+  const quantidade = Math.round(8 + dur / 300);
+  for (let i = 0; i < quantidade; i++) {
+    const r = document.createElement("span");
+    r.className = "racao";
+    r.style.left = (largura / 2 - 10 + Math.random() * 20) + "px";
+    r.style.setProperty("--x", (Math.random() * 90 - 45) + "px");
+    r.style.setProperty("--y", (altura * (0.45 + Math.random() * 0.4)) + "px");
+    r.style.setProperty("--t", (1.6 + Math.random() * 1.4) + "s");
+    r.style.setProperty("--a", (Math.random() * (dur / 1000 - 1.2)).toFixed(2) + "s");
+    aq.appendChild(r);
+  }
+
+  setTimeout(() => {
+    aq.classList.remove("comendo");
+    aq.querySelectorAll(".racao").forEach((r) => r.remove());
+    estado.animando[tanque] = false;
+    desenharEstadoTanques();
+  }, dur + 1800);
+}
+
+function animarAlimentacao(tanques, cfg, teste, mensagem) {
+  for (const t of tanques) animarTanque(t, duracaoPorcao(cfg, [t], teste), mensagem);
+}
+
+/* =====================================================================
+   AÇÕES
+   ===================================================================== */
+async function atualizarStatus(mostrarErro) {
+  try {
+    const s = await api("/api/status");
+    const recebidoEm = Date.now();
+    estado.status = s;
+    estado.diferencaRelogio = s.horaValida && s.agora ? s.agora * 1000 - recebidoEm : null;
+
+    if (!estado.conectado) {
+      estado.conectado = true;
+      mostrarAvisoConexao(null);
+      if (!estado.demo) $("#detalhesConexao").open = false;
+    }
+    mostrarPilula(estado.demo ? "demo" : "on", estado.demo ? "Demonstração" : "Conectada");
+
+    // Alguém alimentou (horário ou outro aparelho)? Mostra a animação aqui também.
+    if (estado.ultimoTotal !== null && s.total > estado.ultimoTotal) {
+      const ultima = s.ultima || {};
+      animarAlimentacao(tanquesItem(ultima), s.config, false,
+        ultima.origem === "agenda" ? "Chegou a hora! ⏰😋" : "Hora do lanche! 😋");
+      atualizarHistorico();
+    }
+    estado.ultimoTotal = s.total;
+
+    receberConfig(s.config);
+    desenharStatus();
+    salvarCache();
+
+    if (Date.now() - estado.ultimoHist > INTERVALO_HIST) atualizarHistorico();
+    return true;
+  } catch (e) {
+    estado.conectado = false;
+    mostrarPilula("", "Sem conexão");
+    desenharEstadoTanques();
+    if (mostrarErro) {
+      mostrarAvisoConexao(e);
+      $("#detalhesConexao").open = true;
+    }
+    desenharCacheInfo();
+    return false;
+  }
+}
+
+async function atualizarHistorico() {
+  try {
+    estado.historico = await api("/api/historico");
+    estado.ultimoHist = Date.now();
+    desenharHistorico();
+    salvarCache();
+  } catch (e) { /* o status já avisa quando cai a conexão */ }
+}
+
+async function comBotao(botao, tarefa) {
+  if (botao.disabled) return;
+  botao.disabled = true;
+  try { await tarefa(); }
+  catch (e) {
+    avisar(e.message, "erro");
+    if (["rede", "tempo", "chave", "config"].includes(e.tipo)) {
+      mostrarAvisoConexao(e);
+      $("#detalhesConexao").open = true;
+    }
+  }
+  finally { botao.disabled = false; }
+}
+
+async function alimentar(alvo) {
+  const r = await api("/api/alimentar", "POST", { tanque: alvo });
+  estado.ultimoTotal = r.numero;
+  const tanques = r.tanques || tanquesDe(alvo);
+  animarAlimentacao(tanques, estado.status && estado.status.config, false);
+  const quem = tanques.length > 1 ? "Peixes e tartarugas" : (tanques[0] === "peixes" ? "Peixes" : "Tartarugas");
+  avisar(`Comida a caminho! ${quem} ${tanques.map((t) => EMOJI[t]).join("")}`, "ok", "🍤");
+  setTimeout(atualizarStatus, 900);
+  setTimeout(atualizarHistorico, 1200);
+}
+
+async function testar(alvo) {
+  const r = await api("/api/testar", "POST", { tanque: alvo });
+  const tanques = r.tanques || tanquesDe(alvo);
+  animarAlimentacao(tanques, estado.status && estado.status.config, true, "Testando a tampa 🔧");
+  avisar(`Teste da tampa ${tanques[0] === "peixes" ? "dos peixes" : "das tartarugas"}`, "ok", "🔧");
+}
+
+async function salvarConfig() {
+  const cfg = estado.edicao;
+  if (!cfg) throw new ErroApi("Conecte a Georgina primeiro.", 0, "config");
+  const horas = cfg.horarios.map((h) => h.hora);
+  if (new Set(horas).size !== horas.length) throw new ErroApi("Tem dois horários iguais. Mude ou apague um deles.", 0, "valid");
+
+  const ordenado = [...cfg.horarios].sort((a, b) => horaParaMin(a.hora) - horaParaMin(b.hora));
+  const r = await api("/api/config", "POST", {
+    horarios: ordenado, peixes: cfg.peixes, tartarugas: cfg.tartarugas
+  });
+  if (estado.status) estado.status.config = r.config;
+  receberConfig(r.config, true);
+  atualizarRelogio();
+  avisar("Horários e porções salvos na Georgina!", "ok", "💾");
+}
+
+async function acertarRelogio() {
+  await api("/api/hora", "POST", { epoch: Math.floor(Date.now() / 1000) });
+  avisar("Relógio acertado com a hora deste aparelho", "ok", "⏱️");
+  await atualizarStatus();
+}
+
+async function limparHistorico() {
+  await api("/api/historico/limpar", "POST");
+  avisar("Histórico apagado", "ok", "🧹");
+  await atualizarHistorico();
+}
+
+/* =====================================================================
+   CICLO DE ATUALIZAÇÃO E CONEXÃO
+   ===================================================================== */
+function iniciarCiclo() {
+  clearInterval(estado.timerStatus);
+  estado.timerStatus = setInterval(() => {
+    if (document.visibilityState === "visible" && (estado.host || estado.demo)) atualizarStatus(false);
+  }, INTERVALO_STATUS);
+}
+
+async function conectar() {
+  estado.ultimoTotal = null;
+  estado.ultimoHist = 0;
+  Memoria.gravar("conexao", { host: estado.host, chave: estado.chave, demo: estado.demo });
+  atualizarLinkEsp();
+  mostrarPilula("busy", "Conectando…");
+  const ok = await atualizarStatus(true);
+  if (ok) {
+    avisar(estado.demo ? "Modo demonstração ligado" : "Georgina conectada!", "ok", estado.demo ? "🎭" : "🔗");
+    await atualizarHistorico();
+  }
+  iniciarCiclo();
+}
+
+function atualizarLinkEsp() {
+  const link = $("#linkEsp");
+  if (location.protocol === "https:" && estado.host && !estado.demo) {
+    link.hidden = false;
+    link.href = baseUrl() + "/";
+  } else {
+    link.hidden = true;
+  }
+}
+
+/* =====================================================================
+   TEMA CLARO / ESCURO
+   ===================================================================== */
+function aplicarTema(tema) {
+  const raiz = document.documentElement;
+  if (tema) raiz.setAttribute("data-theme", tema); else raiz.removeAttribute("data-theme");
+  const escuro = tema ? tema === "dark" : matchMedia("(prefers-color-scheme: dark)").matches;
+  $("#btnTema").textContent = escuro ? "☀️" : "🌙";
+  $("#btnTema").setAttribute("aria-label", escuro ? "Ligar modo claro" : "Ligar modo escuro");
+}
+
+/* =====================================================================
+   EVENTOS
+   ===================================================================== */
+function ligarEventos() {
+  $("#btnTema").addEventListener("click", () => {
+    const atual = document.documentElement.getAttribute("data-theme") ||
+      (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+    const novo = atual === "dark" ? "light" : "dark";
+    Memoria.gravar("tema", novo);
+    aplicarTema(novo);
+  });
+
+  $("#formConexao").addEventListener("submit", (ev) => {
+    ev.preventDefault();
+    estado.host = $("#campoHost").value.trim();
+    estado.chave = $("#campoChave").value.trim();
+    estado.demo = false;
+    $("#chkDemo").checked = false;
+    conectar();
+  });
+
+  $("#btnOlho").addEventListener("click", () => {
+    const c = $("#campoChave");
+    const mostrar = c.type === "password";
+    c.type = mostrar ? "text" : "password";
+    $("#btnOlho").setAttribute("aria-label", mostrar ? "Esconder chave" : "Mostrar chave");
+    $("#btnOlho").textContent = mostrar ? "🙈" : "👁️";
+  });
+
+  $("#chkDemo").addEventListener("change", (ev) => {
+    estado.demo = ev.target.checked;
+    estado.historico = null;
+    estado.status = null;
+    estado.edicao = null;
+    estado.conectado = false;
+    marcarAlterado(false);
+    desenharHorarios();
+    desenharHistorico();
+    if (estado.demo) conectar();
+    else {
+      Memoria.gravar("conexao", { host: estado.host, chave: estado.chave, demo: false });
+      mostrarPilula("", "Sem conexão");
+      desenharEstadoTanques();
+      if (estado.host && estado.chave) conectar();
+    }
+  });
+
+  $$("[data-alimentar]").forEach((b) =>
+    b.addEventListener("click", () => comBotao(b, () => alimentar(b.dataset.alimentar))));
+  $$("[data-testar]").forEach((b) =>
+    b.addEventListener("click", () => comBotao(b, () => testar(b.dataset.testar))));
+
+  $("#btnHora").addEventListener("click", (ev) => comBotao(ev.currentTarget, acertarRelogio));
+  $("#btnSalvar").addEventListener("click", (ev) => comBotao(ev.currentTarget, salvarConfig));
+  $("#btnAtualizarHist").addEventListener("click", (ev) => comBotao(ev.currentTarget, async () => {
+    await atualizarHistorico();
+    avisar("Histórico atualizado", "ok", "🔄");
+  }));
+
+  $("#btnDescartar").addEventListener("click", () => {
+    if (estado.status) receberConfig(estado.status.config, true);
+  });
+
+  $("#btnAdicionar").addEventListener("click", () => {
+    const cfg = estado.edicao;
+    if (!cfg || cfg.horarios.length >= MAX_HORARIOS) return;
+    // Sugere um horário livre, 2 horas depois do último.
+    const usados = cfg.horarios.map((h) => horaParaMin(h.hora));
+    let sugestao = usados.length ? (Math.max(...usados) + 120) % 1440 : 12 * 60;
+    while (usados.includes(sugestao)) sugestao = (sugestao + 30) % 1440;
+    cfg.horarios.push({ hora: minParaTexto(sugestao), ativo: true });
+    marcarAlterado(true);
+    desenharHorarios();
+    const campos = $$("#listaHorarios input[type=time]");
+    if (campos.length) campos[campos.length - 1].focus();
+  });
+
+  // Porção de cada tanque
+  for (const t of TANQUES) {
+    const bloco = document.querySelector(`[data-porcao="${t}"]`);
+    $("#tempo-" + t).addEventListener("input", (ev) => {
+      if (!estado.edicao) return;
+      estado.edicao[t].tempoMs = Math.round(parseFloat(ev.target.value) * 1000);
+      $("#out-" + t).textContent = tempoTexto(estado.edicao[t].tempoMs);
+      marcarAlterado(true);
+    });
+    const mudarRep = (delta) => {
+      if (!estado.edicao) return;
+      const p = estado.edicao[t];
+      const novo = Math.max(1, Math.min(5, p.repeticoes + delta));
+      if (novo === p.repeticoes) return;
+      p.repeticoes = novo;
+      $("#rep-" + t).textContent = novo;
+      $("#pontos-" + t).textContent = "🟠".repeat(novo);
+      marcarAlterado(true);
+    };
+    bloco.querySelector(".menos").addEventListener("click", () => mudarRep(-1));
+    bloco.querySelector(".mais").addEventListener("click", () => mudarRep(1));
+  }
+
+  $$(".filtros button").forEach((b) => b.addEventListener("click", () => {
+    estado.filtro = b.dataset.filtro;
+    $$(".filtros button").forEach((x) => x.setAttribute("aria-pressed", x === b ? "true" : "false"));
+    desenharHistorico();
+  }));
+
+  const dlg = $("#dlgConfirmar");
+  $("#btnLimpar").addEventListener("click", () => {
+    if (typeof dlg.showModal === "function") dlg.showModal();
+    else if (confirm("Apagar o histórico?")) comBotao($("#btnLimpar"), limparHistorico);
+  });
+  $("#dlgNao").addEventListener("click", () => dlg.close());
+  $("#dlgSim").addEventListener("click", () => {
+    dlg.close();
+    comBotao($("#btnLimpar"), limparHistorico);
+  });
+
+  document.addEventListener("visibilitychange", () => {
+    if (document.visibilityState === "visible" && (estado.host || estado.demo)) atualizarStatus(false);
+  });
+
+  window.addEventListener("beforeunload", (ev) => {
+    if (estado.alterado) { ev.preventDefault(); ev.returnValue = ""; }
+  });
+
+  setInterval(atualizarRelogio, 1000);
+}
+
+/* =====================================================================
+   INÍCIO
+   ===================================================================== */
+(function iniciar() {
+  aplicarTema(Memoria.ler("tema", null));
+  const mq = matchMedia("(prefers-color-scheme: dark)");
+  if (mq.addEventListener) mq.addEventListener("change", () => aplicarTema(Memoria.ler("tema", null)));
+
+  $("#campoHost").value = estado.host;
+  $("#campoChave").value = estado.chave;
+  $("#chkDemo").checked = estado.demo;
+
+  ligarEventos();
+  atualizarLinkEsp();
+
+  // Mostra o que estava salvo neste aparelho enquanto conecta.
+  if (estado.status && !estado.demo) {
+    receberConfig(estado.status.config);
+    desenharStatus();
+  } else {
+    desenharHorarios();
+  }
+  desenharHistorico();
+  desenharEstadoTanques();
+
+  if (estado.demo || (estado.host && estado.chave)) {
+    conectar();
+  } else {
+    mostrarPilula("", "Sem conexão");
+    iniciarCiclo();
+  }
+})();
+</script>
+</body>
+</html>
